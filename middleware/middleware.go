@@ -15,10 +15,11 @@ func ProtectedCheck(c *gin.Context) {
 		return
 	}
 	tokenString := strings.Split(cookie.String(), "=")[1]
-	isValid := utils.VerifyToken(tokenString)
-	if !isValid {
+	decoded := utils.VerifyToken(tokenString)
+	if decoded == "" {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"success": false})
 		return
 	}
+	c.Set("userId", decoded)
 	c.Next()
 }
