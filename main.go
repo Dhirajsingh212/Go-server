@@ -30,7 +30,6 @@ func main() {
 	r.GET("/getAllUser", middleware.ProtectedCheck, controllers.GetAllUser)
 	r.DELETE("/delete/:id", middleware.ProtectedCheck, controllers.DeleteUserById)
 	r.GET("/user/:id", middleware.ProtectedCheck, controllers.GetSingleUser)
-	// BLOG ROUTES
 
 	r.Run("localhost:8080")
 }
