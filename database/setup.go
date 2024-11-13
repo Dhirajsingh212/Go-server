@@ -3,7 +3,7 @@ package database
 import (
 	"log"
 
-	setup "github.com/Dhirajsingh212/backend/models"
+	"github.com/Dhirajsingh212/backend/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -18,6 +18,6 @@ func ConnectDB() {
 	if err != nil {
 		log.Fatal("Failed to connect to databse")
 	}
-	database.AutoMigrate(&setup.User{}, &setup.Post{})
+	database.AutoMigrate(&models.User{}, &models.Post{})
 	DB = database
 }

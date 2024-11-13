@@ -4,7 +4,9 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/Dhirajsingh212/backend/controllers"
 	"github.com/Dhirajsingh212/backend/database"
+	"github.com/Dhirajsingh212/backend/middleware"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -20,10 +22,15 @@ func main() {
 
 	r := gin.Default()
 
-	r.GET("/", greetingFunc)
+	r.GET("/health-check", greetingFunc)
+
+	// USER ROUTES
+	r.POST("/signup", controllers.SignupUser)
+	r.GET("/getAllUser", middleware.ProtectedCheck, controllers.GetAllUser)
+	r.DELETE("/delete/:id", controllers.DeleteUserById)
 	r.Run("localhost:8080")
 }
 
 func greetingFunc(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"message": "success"})
+	c.JSON(http.StatusOK, gin.H{"message": "Server is healthy"})
 }

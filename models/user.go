@@ -1,19 +1,23 @@
-package setup
+package models
 
-import "time"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 type User struct {
-	ID        uint      `json:"id" gorm:"primary key"`
+	gorm.Model
 	Username  string    `json:"username"`
 	Email     string    `json:"email"`
 	Password  string    `json:"password"`
 	CreatedAt time.Time `json:"createdAt"`
-	Posts     []Post    `gorm:"foreignKey:UserID,constraint:OnUpdate:CASCADE,OnDelete:SET NULL"`
+	Posts     []Post    `json:"post" gorm:"foreignKey:UserID"`
 }
 
 type Post struct {
-	UserID    uint
-	ID        uint      `json:"id" gorm:"primaryKey"`
+	gorm.Model
+	UserID    uint      `json:"userId"`
 	Title     string    `json:"title"`
 	Content   string    `json:"content"`
 	CreatedAt time.Time `json:"created_at"`
