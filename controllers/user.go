@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/Dhirajsingh212/backend/database"
 	"github.com/Dhirajsingh212/backend/models"
@@ -34,7 +35,11 @@ func SignupUser(c *gin.Context) {
 		return
 	}
 
-	token := utils.GenerateToken(user.Username)
+	var findUserDbData models.User
+
+	database.DB.Where("username = ?", user.Username).First(&findUserDbData)
+
+	token := utils.GenerateToken(findUserDbData.Username, strconv.FormatUint(uint64(findUserDbData.ID), 10))
 
 	c.SetSameSite(http.SameSiteNoneMode)
 	c.SetCookie("token", token, 3600*24, "", "", true, false)
@@ -66,7 +71,7 @@ func SignInUser(c *gin.Context) {
 		return
 	}
 
-	token := utils.GenerateToken(UserDetails.Username)
+	token := utils.GenerateToken(UserDetails.Username, strconv.FormatUint(uint64(UserDetails.ID), 10))
 	c.SetSameSite(http.SameSiteNoneMode)
 	c.SetCookie("token", token, 3600*24, "", "", true, false)
 	c.JSON(http.StatusOK, gin.H{"success": true})
