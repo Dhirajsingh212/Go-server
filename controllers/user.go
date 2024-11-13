@@ -29,7 +29,10 @@ func SignupUser(c *gin.Context) {
 
 	hp := utils.HashPassowrd(userDetails.Password)
 	user := models.User{Username: userDetails.Username, Email: userDetails.Email, Password: hp}
-	database.DB.Create(&user)
+	if err := database.DB.Create(&user).Error; err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"success": false, "message": err.Error()})
+		return
+	}
 
 	token := utils.GenerateToken(user.Username)
 
@@ -45,8 +48,11 @@ func SignInUser(c *gin.Context) {
 		return
 	}
 
-	var UserDetails UserInputs
-	database.DB.Where("username = ?", body.Username).First(&UserDetails)
+	var UserDetails models.User
+	if err := database.DB.Where("username = ?", body.Username).First(&UserDetails).Error; err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"success": false, "message": err.Error()})
+		return
+	}
 
 	if UserDetails.Username == "" {
 		c.JSON(http.StatusBadGateway, gin.H{"success": false, "message": "User does not exits"})
@@ -69,7 +75,10 @@ func SignInUser(c *gin.Context) {
 func GetAllUser(c *gin.Context) {
 	var users []models.User
 
-	database.DB.Find(&users)
+	if err := database.DB.Find(&users).Error; err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"success": false, "message": err.Error()})
+		return
+	}
 
 	c.JSON(http.StatusOK, gin.H{"data": users})
 }
@@ -80,6 +89,9 @@ func DeleteUserById(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": "record not found"})
 		return
 	}
-	database.DB.Delete(&user)
+	if err := database.DB.Delete(&user).Error; err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"success": false, "message": err.Error()})
+		return
+	}
 	c.JSON(http.StatusOK, gin.H{"data": "success"})
 }
