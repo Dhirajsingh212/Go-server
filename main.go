@@ -26,6 +26,7 @@ func main() {
 
 	// USER ROUTES
 	r.POST("/signup", controllers.SignupUser)
+	r.POST("/signin", controllers.SignInUser)
 	r.GET("/getAllUser", middleware.ProtectedCheck, controllers.GetAllUser)
 	r.DELETE("/delete/:id", controllers.DeleteUserById)
 	r.Run("localhost:8080")

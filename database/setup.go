@@ -1,6 +1,7 @@
 package database
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/Dhirajsingh212/backend/models"
@@ -20,4 +21,5 @@ func ConnectDB() {
 	}
 	database.AutoMigrate(&models.User{}, &models.Post{})
 	DB = database
+	defer fmt.Println("Database connected")
 }

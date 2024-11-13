@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"time"
@@ -18,31 +17,36 @@ func HashPassowrd(password string) string {
 	return string(byteData)
 }
 
+func VerifyPassword(dbPassword string, reqPassword string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(dbPassword), []byte(reqPassword))
+	return err == nil
+}
+
 func GenerateToken(username string) string {
 	secretKey := os.Getenv("SECRET_KEY")
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"username": username,
 		"exp":      time.Now().Add(time.Hour * 24).Unix(),
 	})
-	tokenString, err := token.SignedString(secretKey)
+	tokenString, err := token.SignedString([]byte(secretKey))
 	if err != nil {
 		return ""
 	}
 	return tokenString
 }
 
-func VerifyToken(tokenString string) error {
+func VerifyToken(tokenString string) bool {
 	secretKey := os.Getenv("SECRET_KEY")
 	token, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
-		return secretKey, nil
+		return []byte(secretKey), nil
 	})
 
 	if err != nil {
-		return err
+		return false
 	}
 	if !token.Valid {
-		return fmt.Errorf("invalid token")
+		return false
 	}
 
-	return nil
+	return true
 }
