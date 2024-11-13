@@ -28,7 +28,10 @@ func main() {
 	r.POST("/signup", controllers.SignupUser)
 	r.POST("/signin", controllers.SignInUser)
 	r.GET("/getAllUser", middleware.ProtectedCheck, controllers.GetAllUser)
-	r.DELETE("/delete/:id", controllers.DeleteUserById)
+	r.DELETE("/delete/:id", middleware.ProtectedCheck, controllers.DeleteUserById)
+	r.GET("/user/:id", middleware.ProtectedCheck, controllers.GetSingleUser)
+	// BLOG ROUTES
+
 	r.Run("localhost:8080")
 }
 

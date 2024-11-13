@@ -95,3 +95,12 @@ func DeleteUserById(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"data": "success"})
 }
+
+func GetSingleUser(c *gin.Context) {
+	var user models.User
+	if err := database.DB.Where("id = ?", c.Param("id")).First(&user).Error; err != nil {
+		c.AbortWithStatusJSON(http.StatusBadGateway, gin.H{"success": false, "message": "User does not exists"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"success": true, "data": user})
+}
